@@ -51,7 +51,7 @@ var xValue = function(d) { return d.budget;}, // data -> value
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
-var yValue = function(d) { return d["revenue"];}, // data -> value
+var yValue = function(d) { return d["vote_average"];}, // data -> value
     yScale = d3.scale.linear().range([height, 0]), // value -> display
     yMap = function(d) { return yScale(yValue(d));}, // data -> display
     yAxis = d3.svg.axis().scale(yScale).orient("left");
@@ -67,18 +67,19 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
 // add the tooltip area to the webpage
 var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
 // load data
-d3.csv("imdb.csv", function(error, data) {
+d3.csv("Imdb10.csv", function(error, data) {
 console.log(data);
   // change string (from CSV) into number format
   data.forEach(function(d) {
     d.budget = +d.budget;
-    d["revenue"] = +d["revenue"];
+    d["vote_average"] = +d["vote_average"];
     console.log(d);
   });
 
@@ -101,14 +102,13 @@ console.log(data);
   // y-axis
   svg.append("g")
       .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
+      .call(yAxis)    .append("text")
       .attr("class", "label")
-      .attr("transform", "rotate(-90)")
+      //.attr("transform", "rotate(-90)")
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("revenue");
+      .text("vote_average");
 
   // draw dots
   svg.selectAll(".dot")
@@ -118,7 +118,7 @@ console.log(data);
       .attr("r", 3.5)
       .attr("cx", xMap)
       .attr("cy", yMap)
-      .style("fill", function(d) { return color(cValue(d));}) 
+      .style("fill", function(d) { return color(cValue(d));})
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
@@ -132,7 +132,10 @@ console.log(data);
           tooltip.transition()
                .duration(500)
                .style("opacity", 0);
-      });
+      }
+      );
+
+
 
   // draw legend
   var legend = svg.selectAll(".legend")
