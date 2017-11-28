@@ -48,16 +48,11 @@
     <div class="input-field col s12">
         <form>
             <div id="user">
-                <select id="data_genre" type='select' onchange='refresh();'
-                        style='color:steelblue;font-size:1.1em;'>
-                    <option value="" name="Select one...">All</option>
-                    <option value='Science Fiction' label='SF'>Science-Fiction</option>
-                    <option value='Adventure' label='Aventure'>Aventure</option>
-                    <option value='Drama' name='Drame'>Drama</option>
-                    <option value='Action' name='Action'>Action</option>
-                    <option value='Fantasy' name='Fantastique'>Fantasy</option>
-                </select>
-
+                <button onClick='refresh()' id='data_genre' value ='Science Fiction'>Science-fiction</button>
+                <button onClick='refresh()' id = ??? value ='Adventure'>Aventure</button>
+                <button onClick='refresh()'  value ='Drama'>Drame</button>
+                <button onClick='refresh()'  value ='Action'>Action</button>
+                <button onClick='refresh()'  value ='Fantasy'>Fantasy</button>
             </div>
         </form>
     </div>
