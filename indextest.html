@@ -1,132 +1,209 @@
 <!DOCTYPE html>
-<style>
-body {
-  font-family: 'Open Sans', sans-serif;
-}
-#main {
-  width: 960px;
-}
-.axis .domain {
-  display: none;
-}
-</style>
-<div id="main">
-<svg width="960" height="500"></svg>
-</div>
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Stacked Barchart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <style>
+
+        .axis text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12pt;
+        }
+
+        .axis .label {
+            font-size: 20pt;
+        }
+
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+    </style>
+</head>
+<body>
 <script>
-// create the svg
-var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var outerWidth = 3000;
+    var outerHeight = 500;
+    var margin = {left: 90, top: 30, right: 30, bottom: 40};
+    var barPadding = 0.2;
+    var xColumn = "release_date";
+    var yColumn = "budget";
+    var colorColumn = "genre";
+    var layerColumn = colorColumn;
+    var innerWidth = outerWidth - margin.left - margin.right;
+    var innerHeight = outerHeight - margin.top - margin.bottom;
+    var svg = d3.select("body").append("svg")
+        .attr("width", outerWidth)
+        .attr("height", outerHeight);
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var xAxisG = g.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + innerHeight + ")");
+    var yAxisG = g.append("g")
+        .attr("class", "y axis");
+    var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
+    var yScale = d3.scaleLinear().range([innerHeight, 0]);
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    // Use a modified SI formatter that uses "B" for Billion.
+    //var siFormat = d3.format("s");
+    //var customTickFormat = function (d){
+    //return siFormat(d).replace("G", "B");
+    //};
+    //var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
+    //    .outerTickSize(0);
+    //var yAxis = d3.svg.axis().scale(yScale).orient("left")
+    //    .ticks(5)
+    //    .tickFormat(customTickFormat)
+    //    .outerTickSize(0);
+    function render(data) {
 
-// set x scale
-var x = d3.scaleBand()
-    .rangeRound([0, width])
-    .paddingInner(0.05)
-    .align(0.1);
+        var date_format = d3.timeParse("%Y-%m-%d");
+        data.forEach(function (d, i) {
+            d.release_date = date_format(d.release_date);
+        });
+        console.log(data)
+        // Filter years
+        data = data.filter(function (d) {
+            if (d.release_date) {
+                return +d.release_date.getFullYear() > 1970;
+            } else {
+                return false;
+            }
+        });
 
-// set y scale
-var y = d3.scaleLinear()
-    .rangeRound([height, 0]);
+        // Compute summry values
+        var nested = d3.nest()
+            .key(function (d) {
+                if (d.release_date) {
+                    return +d.release_date.getFullYear();
+                } else {
+                    return "nodate";
+                }
 
-// set the colors
-var z = d3.scaleOrdinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+            })
+            .rollup(function (leaves) {
+                return {
+                    'count': leaves.length,
+                    'budget_total': d3.sum(leaves, function (d) {
+                        return d.budget;
+                    }),
+                    'budget_total_sf': d3.sum(leaves, function (d) {
+                        var genres = JSON.parse(d.genres);
+                        is_sf = false;
+                        genres.forEach(function (g) {
+                            if (+g.id == 878) {
+                                is_sf = true;
+                            }
+                        });
+                        return is_sf ? d.budget : 0;
+                    })
+                }
+            })
+            .entries(data);
 
-// load the csv and create the chart
-d3.csv("tmdb_5000.csv", function(d, i, columns) {
-  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
-  d.total = t;
-  return d;
-}, function(error, data) {
-  if (error) throw error;
+        console.log(nested);
 
-  var keys = data.columns.slice(1);
+        nested.sort(function (x, y) {
+            return d3.ascending(+x.key, +y.key);
+        });
 
-  data.sort(function(a, b) { return b.total - a.total; });
-  x.domain(data.map(function(d) { return d.State; }));
-  y.domain([0, d3.max(data, function(d) { return d.total; })]).nice();
-  z.domain(keys);
+        var s = d3.stack()
+            .keys(["non_sf", "sf"])
+            .value(function (d, key){
+                if (key == "non_sf"){
+                    return (d.value.budget_total - d.value.budget_total_sf) / d.value.budget_total * 100;
+                } else {
+                    return d.value.budget_total_sf / d.value.budget_total * 100;
+                }
+            })
+            (nested);
 
-  g.append("g")
-    .selectAll("g")
-    .data(d3.stack().keys(keys)(data))
-    .enter().append("g")
-      .attr("fill", function(d) { return z(d.key); })
-    .selectAll("rect")
-    .data(function(d) { return d; })
-    .enter().append("rect")
-      .attr("x", function(d) { return x(d.data.release_date); })
-      .attr("y", function(d) { return y(d[1]); })
-      .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-      .attr("width", x.bandwidth())
-    .on("mouseover", function() { tooltip.style("display", null); })
-    .on("mouseout", function() { tooltip.style("display", "none"); })
-    .on("mousemove", function(d) {
-      console.log(d);
-      var xPosition = d3.mouse(this)[0] - 5;
-      var yPosition = d3.mouse(this)[1] - 5;
-      tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      tooltip.select("text").text(d[1]-d[0]);
-    });
+        console.log(s);
 
-  g.append("g")
-      .attr("class", "axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+        xScale.domain(nested.map(function(d){return d.key;}));
+        yScale.domain([
+            0,
+            100
+            //d3.max(nested, function (d) {
+            //    return d.value.budget_total;
+            //})
+        ]).nice();
+        //colorScale.domain();
 
-  g.append("g")
-      .attr("class", "axis")
-      .call(d3.axisLeft(y).ticks(null, "s"))
-    .append("text")
-      .attr("x", 2)
-      .attr("y", y(y.ticks().pop()) + 0.5)
-      .attr("dy", "0.32em")
-      .attr("fill", "#000")
-      .attr("font-weight", "bold")
-      .attr("text-anchor", "start");
 
-  var legend = g.append("g")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
-      .attr("text-anchor", "end")
-    .selectAll("g")
-    .data(keys.slice().reverse())
-    .enter().append("g")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-  legend.append("rect")
-      .attr("x", width - 19)
-      .attr("width", 19)
-      .attr("height", 19)
-      .attr("fill", z);
+        g.selectAll(".serie")
+            .data(s)
+            .enter().append("g")
+            .attr("class", "serie")
+            .attr("fill", function (d) {
+                return colorScale(d.key);
+            })
+            .selectAll("rect")
+            .data(function (d) {
+                return d;
+            })
+            .enter().append("rect")
+            .attr("x", function (d) {
+                return xScale(d.data.key);
+            })
+            .attr("y", function (d) {
+                return yScale(d[1]);
+            })
+            .attr("height", function (d) {
+                return yScale(d[0]) - yScale(d[1]);
+            })
+            .attr("width", xScale.bandwidth());
 
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9.5)
-      .attr("dy", "0.32em")
-      .text(function(d) { return d; });
-});
 
-  // Prep the tooltip bits, initial display is hidden
-  var tooltip = svg.append("g")
-    .attr("class", "tooltip")
-    .style("display", "none");
-      
-  tooltip.append("rect")
-    .attr("width", 60)
-    .attr("height", 20)
-    .attr("fill", "white")
-    .style("opacity", 0.5);
+        // Draw x axis
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + innerHeight + ")")
+            .call(d3.axisBottom(xScale));
 
-  tooltip.append("text")
-    .attr("x", 30)
-    .attr("dy", "1.2em")
-    .style("text-anchor", "middle")
-    .attr("font-size", "12px")
-    .attr("font-weight", "bold");
 
+// Draw y axis
+        g.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(yScale).ticks(null, "s"));
+
+
+        /*xAxisG.call(xAxis);
+         yAxisG.call(yAxis);
+         var layerGroups = g.selectAll(".layer").data(layers);
+         layerGroups.enter().append("g").attr("class", "layer");
+         layerGroups.exit().remove();
+         layerGroups.style("fill", function (d) {
+         return colorScale(d.key);
+         });
+         var bars = layerGroups.selectAll("rect").data(function (d) {
+         return d.values;
+         });
+         bars.enter().append("rect")
+         bars.exit().remove();
+         bars
+         .attr("x", function (d) {
+         return xScale(d[xColumn]);
+         })
+         .attr("y", function (d) {
+         return yScale(d.y0 + d.y);
+         })
+         .attr("width", xScale.rangeBand())
+         .attr("height", function (d) {
+         return innerHeight - yScale(d.y);
+         })*/
+    }
+
+    function type(d) {
+        return d;
+    }
+
+    d3.csv("tmdb_5000_movies.csv", type, render);
 </script>
+</body>
+</html>
