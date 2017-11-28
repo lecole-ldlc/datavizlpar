@@ -5,6 +5,10 @@
     <title>Stacked Barchart</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
     <style>
 
         .axis text {
@@ -21,22 +25,53 @@
             stroke: #000;
             shape-rendering: crispEdges;
         }
+
+        div.d3-tooltip {
+            position: absolute;
+            text-align: center;
+            width: 100px;
+            height: 40px;
+            padding: 2px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            font-size: 16px;
+        }
+
     </style>
 </head>
-<div>
 <div class="container" style="text-align: center">
-<H1>La Planche à Repasser</H1>
-</div>
-<div class="container" style="text-align: center">
-     <h2>Normalized stack bar charts</h2>
+    <H1>La Planche à Repasser</H1>
+    <p>Genres</p>
+    <div class="input-field col s12">
+        <form>
+            <div id="user">
+                <select id="data_genre" type='select' onchange='refresh();'
+                        style='color:steelblue;font-size:1.1em;'>
+                    <option value="" name="Select one...">All</option>
+                    <option value='Science Fiction' label='SF'>Science-Fiction</option>
+                    <option value='Adventure' label='Aventure'>Aventure</option>
+                    <option value='Drama' name='Drame'>Drama</option>
+                    <option value='Action' name='Action'>Action</option>
+                    <option value='Fantasy' name='Fantastique'>Fantasy</option>
+                </select>
 
-            <div class="row">
+            </div>
+        </form>
+    </div>
+    <div class="container" style="text-align: center">
+        <h2>Normalized stack bar charts</h2>
+
+        <div class="row">
             <div class="col-xs-12">
                 <p>Part des budgets des films de science-fiction par rapport au budget total</p>
                 <svg width="300" height="300" id="stack"></svg>
+                <div class="d3-tooltip"></div>
             </div>
-            </div>
-</div>
+        </div>
+    </div>
 </div>
 </body>
 <script>
@@ -55,34 +90,11 @@
     var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-    // Use a modified SI formatter that uses "B" for Billion.
-    //var siFormat = d3.format("s");
-    //var customTickFormat = function (d){
-    //return siFormat(d).replace("G", "B");
-    //};
-    //var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
-    //.outerTickSize(0);
-    //var yAxis = d3.svg.axis().scale(yScale).orient("left")
-    //.ticks(5)
-    //.tickFormat(customTickFormat)
-    //.outerTickSize(0);
+    var data;
 
-    function render(data) {
+    function render(genre, key) {
 
-        var date_format = d3.timeParse("%Y-%m-%d");
-        data.forEach(function (d, i) {
-            d.release_date = date_format(d.release_date);
-        });
-        console.log(data)
-        // Filter years
-        data = data.filter(function (d) {
-            if (d.release_date) {
-                return +d.release_date.getFullYear() > 1970;
-            } else {
-                return false;
-            }
-        });
-
+        g.selectAll(".serie").remove();
         // Compute summry values
         var nested = d3.nest()
             .key(function (d) {
@@ -96,23 +108,23 @@
             .rollup(function (leaves) {
                 return {
                     'count': leaves.length,
-                    'budget_total': d3.sum(leaves, function (d) {
-                        return d.budget;
+                    'total': d3.sum(leaves, function (d) {
+                        return d[key];
                     }),
-                    'budget_total_sf': d3.sum(leaves, function (d) {
+                    'total_sf': d3.sum(leaves, function (d) {
                         var genres = JSON.parse(d.genres);
                         is_sf = false;
                         genres.forEach(function (g) {
-                            if (+g.id == 878) {
+                            if (g.name === genre) {
                                 is_sf = true;
                             }
                         });
-                        return is_sf ? d.budget : 0;
+                        return is_sf ? d[key] : 0;
                     })
                 }
             })
             .entries(data);
-
+        console.log(genre);
         console.log(nested);
 
         nested.sort(function (x, y) {
@@ -120,19 +132,21 @@
         });
 
         var s = d3.stack()
-            .keys(["non_sf", "sf"])
-            .value(function (d, key){
-                if (key == "non_sf"){
-                    return (d.value.budget_total - d.value.budget_total_sf) / d.value.budget_total * 100;
+            .keys(["autre", "genre"])
+            .value(function (d, key) {
+                if (key == "autre") {
+                    return (d.value.total - d.value.total_sf) / d.value.total * 100;
                 } else {
-                    return d.value.budget_total_sf / d.value.budget_total * 100;
+                    return d.value.total_sf / d.value.total * 100;
                 }
             })
             (nested);
 
         console.log(s);
 
-        xScale.domain(nested.map(function(d){return d.key;}));
+        xScale.domain(nested.map(function (d) {
+            return d.key;
+        }));
         yScale.domain([
             0,
             100
@@ -142,6 +156,8 @@
         ]).nice();
         //colorScale.domain();
 
+        var tip = d3.select(".d3-tooltip")
+            .style("visibility", "hidden");
 
         g.selectAll(".serie")
             .data(s)
@@ -149,6 +165,15 @@
             .attr("class", "serie")
             .attr("fill", function (d) {
                 return colorScale(d.key);
+            })
+            .on("mouseover", function (d) {
+                tip.html("<p>" + d.key + "</p>")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px")
+                    .style("visibility", "visible")
+            })
+            .on("mouseout", function (d) {
+                tip.style("visibility", "hidden")
             })
             .selectAll("rect")
             .data(function (d) {
@@ -164,7 +189,7 @@
             .attr("height", function (d) {
                 return yScale(d[0]) - yScale(d[1]);
             })
-            .attr("width", xScale.bandwidth());
+            .attr("width", xScale.bandwidth())
 
 
         g.append("g")
@@ -177,36 +202,34 @@
             .call(d3.axisLeft(yScale).ticks(null, "s"))
 
 
-        /*xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-        var layerGroups = g.selectAll(".layer").data(layers);
-        layerGroups.enter().append("g").attr("class", "layer");
-        layerGroups.exit().remove();
-        layerGroups.style("fill", function (d) {
-            return colorScale(d.key);
-        });
-        var bars = layerGroups.selectAll("rect").data(function (d) {
-            return d.values;
-        });
-        bars.enter().append("rect")
-        bars.exit().remove();
-        bars
-            .attr("x", function (d) {
-                return xScale(d[xColumn]);
-            })
-            .attr("y", function (d) {
-                return yScale(d.y0 + d.y);
-            })
-            .attr("width", xScale.rangeBand())
-            .attr("height", function (d) {
-                return innerHeight - yScale(d.y);
-            })*/
     }
 
     function type(d) {
         return d;
     }
 
-    d3.csv("tmdb_5000_movies.csv", type, render);
+    function refresh(){
+        genre = $("#data_genre").val();
+        render(genre, "revenue");
+    }
+    function data_loaded(data_) {
+        data = data_;
+        var date_format = d3.timeParse("%Y-%m-%d");
+        data.forEach(function (d, i) {
+            d.release_date = date_format(d.release_date);
+        });
+
+        // Filter years
+        data = data.filter(function (d) {
+            if (d.release_date) {
+                return +d.release_date.getFullYear() > 1970;
+            } else {
+                return false;
+            }
+        });
+        refresh()
+    }
+
+    d3.csv("tmdb_5000_movies.csv", type, data_loaded);
 </script>
 </html>

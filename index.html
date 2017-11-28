@@ -3,13 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>Stacked Barchart</title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <style>
 
         .axis text {
-            font-family: 'Open Sans', sans-serif;
+            font-family: "Helvetica Neue", Marker Felt, fantasy;
             font-size: 12pt;
         }
 
@@ -24,35 +23,38 @@
         }
     </style>
 </head>
-<body>
+<div>
+<div class="container" style="text-align: center">
+<H1>La Planche à Repasser</H1>
+</div>
+<div class="container" style="text-align: center">
+     <h2>Normalized stack bar charts</h2>
+
+            <div class="row">
+            <div class="col-xs-12">
+                <p>Part des budgets des films de science-fiction par rapport au budget total</p>
+                <svg width="300" height="300" id="stack"></svg>
+            </div>
+            </div>
+</div>
+</div>
+</body>
 <script>
-    var outerWidth = 500;
-    var outerHeight = 250;
+    var outerWidth = 2000;
+    var outerHeight = 500;
     var margin = {left: 90, top: 30, right: 30, bottom: 40};
     var barPadding = 0.2;
 
-    var xColumn = "release_date";
-    var yColumn = "budget";
-    var colorColumn = "genre";
-    var layerColumn = colorColumn;
-
     var innerWidth = outerWidth - margin.left - margin.right;
     var innerHeight = outerHeight - margin.top - margin.bottom;
-
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#stack")
         .attr("width", outerWidth)
         .attr("height", outerHeight);
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var xAxisG = g.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + innerHeight + ")");
-    var yAxisG = g.append("g")
-        .attr("class", "y axis");
-
-    var xScale = d3.scale.ordinal().rangeBands([0, innerWidth], barPadding);
-    var yScale = d3.scale.linear().range([innerHeight, 0]);
-    var colorScale = d3.scale.category10();
+    var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
+    var yScale = d3.scaleLinear().range([innerHeight, 0]);
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     // Use a modified SI formatter that uses "B" for Billion.
     //var siFormat = d3.format("s");
     //var customTickFormat = function (d){
@@ -64,17 +66,18 @@
     //.ticks(5)
     //.tickFormat(customTickFormat)
     //.outerTickSize(0);
+
     function render(data) {
 
-        var date_format = d3.time.format("%Y-%m-%d");
+        var date_format = d3.timeParse("%Y-%m-%d");
         data.forEach(function (d, i) {
-            d.release_date = date_format.parse(d.release_date);
+            d.release_date = date_format(d.release_date);
         });
         console.log(data)
         // Filter years
         data = data.filter(function (d) {
             if (d.release_date) {
-                return +d3.time.year(d.release_date).getFullYear() > 1950;
+                return +d.release_date.getFullYear() > 1970;
             } else {
                 return false;
             }
@@ -84,7 +87,7 @@
         var nested = d3.nest()
             .key(function (d) {
                 if (d.release_date) {
-                    return d3.time.year(d.release_date).getFullYear();
+                    return +d.release_date.getFullYear();
                 } else {
                     return "nodate";
                 }
@@ -112,29 +115,69 @@
 
         console.log(nested);
 
-        nested.sort(function(x,y){
+        nested.sort(function (x, y) {
             return d3.ascending(+x.key, +y.key);
         });
 
-        var stack = d3.layout.stack()
-            .keys(["values.budget_total", "values.budget_total_sf"]).map(function (t) {  })
+        var s = d3.stack()
+            .keys(["non_sf", "sf"])
+            .value(function (d, key){
+                if (key == "non_sf"){
+                    return (d.value.budget_total - d.value.budget_total_sf) / d.value.budget_total * 100;
+                } else {
+                    return d.value.budget_total_sf / d.value.budget_total * 100;
+                }
+            })
+            (nested);
 
+        console.log(s);
 
-        ;
-        var layers = stack(nested);
-        xScale.domain(nested.keys());
+        xScale.domain(nested.map(function(d){return d.key;}));
         yScale.domain([
             0,
-            d3.max(layers, function (layer) {
-                return d3.max(layer.values, function (d) {
-                    return d.y0 + d.y;
-                });
+            100
+            //d3.max(nested, function (d) {
+            //    return d.value.budget_total;
+            //})
+        ]).nice();
+        //colorScale.domain();
+
+
+        g.selectAll(".serie")
+            .data(s)
+            .enter().append("g")
+            .attr("class", "serie")
+            .attr("fill", function (d) {
+                return colorScale(d.key);
             })
-        ]);
-        colorScale.domain(layers.map(function (layer) {
-            return layer.key;
-        }));
-        xAxisG.call(xAxis);
+            .selectAll("rect")
+            .data(function (d) {
+                return d;
+            })
+            .enter().append("rect")
+            .attr("x", function (d) {
+                return xScale(d.data.key);
+            })
+            .attr("y", function (d) {
+                return yScale(d[1]);
+            })
+            .attr("height", function (d) {
+                return yScale(d[0]) - yScale(d[1]);
+            })
+            .attr("width", xScale.bandwidth());
+
+
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + innerHeight + ")")
+            .call(d3.axisBottom(xScale));
+
+        g.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(yScale).ticks(null, "s"))
+
+
+        /*xAxisG.call(xAxis);
         yAxisG.call(yAxis);
         var layerGroups = g.selectAll(".layer").data(layers);
         layerGroups.enter().append("g").attr("class", "layer");
@@ -157,15 +200,13 @@
             .attr("width", xScale.rangeBand())
             .attr("height", function (d) {
                 return innerHeight - yScale(d.y);
-            })
+            })*/
     }
 
     function type(d) {
-        d.genre = +d.genre;
         return d;
     }
 
     d3.csv("tmdb_5000_movies.csv", type, render);
 </script>
-</body>
 </html>
