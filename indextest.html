@@ -8,7 +8,7 @@
     <style>
 
         .axis text {
-            font-family: 'Open Sans', sans-serif;
+            font-family: "Helvetica Neue", Marker Felt, fantasy;
             font-size: 12pt;
         }
 
@@ -23,28 +23,35 @@
         }
     </style>
 </head>
-<body>
+<div>
+<div class="container" style="text-align: center">
+<H1>La Planche à Repasser</H1>
+</div>
+<div class="container" style="text-align: center">
+     <h2>Normalized stack bar charts</h2>
+
+            <div class="row">
+            <div class="col-xs-12">
+                <p>Part des budgets des films de science-fiction par rapport au budget total</p>
+                <svg width="300" height="300" id="stack"></svg>
+            </div>
+            </div>
+</div>
+</div>
+</body>
 <script>
-    var outerWidth = 3000;
+    var outerWidth = 800;
     var outerHeight = 500;
     var margin = {left: 90, top: 30, right: 30, bottom: 40};
     var barPadding = 0.2;
-    var xColumn = "release_date";
-    var yColumn = "budget";
-    var colorColumn = "genre";
-    var layerColumn = colorColumn;
+
     var innerWidth = outerWidth - margin.left - margin.right;
     var innerHeight = outerHeight - margin.top - margin.bottom;
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#stack")
         .attr("width", outerWidth)
         .attr("height", outerHeight);
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var xAxisG = g.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + innerHeight + ")");
-    var yAxisG = g.append("g")
-        .attr("class", "y axis");
     var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -54,11 +61,12 @@
     //return siFormat(d).replace("G", "B");
     //};
     //var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
-    //    .outerTickSize(0);
+    //.outerTickSize(0);
     //var yAxis = d3.svg.axis().scale(yScale).orient("left")
-    //    .ticks(5)
-    //    .tickFormat(customTickFormat)
-    //    .outerTickSize(0);
+    //.ticks(5)
+    //.tickFormat(customTickFormat)
+    //.outerTickSize(0);
+
     function render(data) {
 
         var date_format = d3.timeParse("%Y-%m-%d");
@@ -69,7 +77,7 @@
         // Filter years
         data = data.filter(function (d) {
             if (d.release_date) {
-                return +d.release_date.getFullYear() > 1970;
+                return +d.release_date.getFullYear() > 1960;
             } else {
                 return false;
             }
@@ -135,7 +143,6 @@
         //colorScale.domain();
 
 
-
         g.selectAll(".serie")
             .data(s)
             .enter().append("g")
@@ -160,43 +167,30 @@
             .attr("width", xScale.bandwidth());
 
 
-        // Draw x axis
-        g.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + innerHeight + ")")
-            .call(d3.axisBottom(xScale));
-
-
-// Draw y axis
-        g.append("g")
-            .attr("class", "axis")
-            .call(d3.axisLeft(yScale).ticks(null, "s"));
-
-
         /*xAxisG.call(xAxis);
-         yAxisG.call(yAxis);
-         var layerGroups = g.selectAll(".layer").data(layers);
-         layerGroups.enter().append("g").attr("class", "layer");
-         layerGroups.exit().remove();
-         layerGroups.style("fill", function (d) {
-         return colorScale(d.key);
-         });
-         var bars = layerGroups.selectAll("rect").data(function (d) {
-         return d.values;
-         });
-         bars.enter().append("rect")
-         bars.exit().remove();
-         bars
-         .attr("x", function (d) {
-         return xScale(d[xColumn]);
-         })
-         .attr("y", function (d) {
-         return yScale(d.y0 + d.y);
-         })
-         .attr("width", xScale.rangeBand())
-         .attr("height", function (d) {
-         return innerHeight - yScale(d.y);
-         })*/
+        yAxisG.call(yAxis);
+        var layerGroups = g.selectAll(".layer").data(layers);
+        layerGroups.enter().append("g").attr("class", "layer");
+        layerGroups.exit().remove();
+        layerGroups.style("fill", function (d) {
+            return colorScale(d.key);
+        });
+        var bars = layerGroups.selectAll("rect").data(function (d) {
+            return d.values;
+        });
+        bars.enter().append("rect")
+        bars.exit().remove();
+        bars
+            .attr("x", function (d) {
+                return xScale(d[xColumn]);
+            })
+            .attr("y", function (d) {
+                return yScale(d.y0 + d.y);
+            })
+            .attr("width", xScale.rangeBand())
+            .attr("height", function (d) {
+                return innerHeight - yScale(d.y);
+            })*/
     }
 
     function type(d) {
@@ -205,5 +199,4 @@
 
     d3.csv("tmdb_5000_movies.csv", type, render);
 </script>
-</body>
 </html>
