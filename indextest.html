@@ -48,11 +48,12 @@
     <div class="input-field col s12">
         <form>
             <div id="user">
-                <button onClick='refresh()' id='data_genre' value ='Science Fiction'>Science-fiction</button>
-                <button onClick='refresh()' id = ??? value ='Adventure'>Aventure</button>
-                <button onClick='refresh()'  value ='Drama'>Drame</button>
-                <button onClick='refresh()'  value ='Action'>Action</button>
-                <button onClick='refresh()'  value ='Fantasy'>Fantasy</button>
+
+                <button onClick='refresh()'  id = 'button 1' value ='Science Fiction'>Science-fiction</button>
+                <button onClick='refresh()'  id = 'button 2' value ='Adventure'>Aventure</button>
+                <button onClick='refresh()'  id = 'button 3' value ='Drama'>Drame</button>
+                <button onClick='refresh()'  id = 'button 4' value ='Action'>Action</button>
+                <button onClick='refresh()'  id = 'button 5' value ='Fantasy'>Fantasy</button>
             </div>
         </form>
     </div>
@@ -86,6 +87,7 @@
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     var data;
+
 
     function render(genre, key) {
 
@@ -204,6 +206,8 @@
     }
 
     function refresh(){
+// trouver comment utiliser l'ID de chaque bouton au lieu de data_genre
+
         genre = $("#data_genre").val();
         render(genre, "revenue");
     }
