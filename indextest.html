@@ -99,10 +99,10 @@
                         return d[key];
                     }),
                     'total_sf': d3.sum(leaves, function (d) {
-                        var genres = JSON.parse(d.genres);
+                        var genres = d.genres.split("|");
                         is_sf = false;
                         genres.forEach(function (g) {
-                            if (g.name === genre) {
+                            if (g === genre) {
                                 is_sf = true;
                             }
                         });
@@ -192,7 +192,8 @@
     }
     function data_loaded(data_) {
         data = data_;
-        var date_format = d3.timeParse("%Y-%m-%d");
+        console.log(data_);
+        var date_format = d3.timeParse("%Y");
         data.forEach(function (d, i) {
             d.title_year = date_format(d.title_year);
         });

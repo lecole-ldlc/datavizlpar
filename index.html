@@ -10,22 +10,18 @@
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
     <style>
-
         .axis text {
             font-family: "Helvetica Neue", Marker Felt, fantasy;
             font-size: 11pt;
         }
-
         .axis .label {
             font-size: 20pt;
         }
-
         .axis path, .axis line {
             fill: none;
             stroke: #000;
             shape-rendering: crispEdges;
         }
-
         div.d3-tooltip {
             position: absolute;
             text-align: center;
@@ -39,7 +35,6 @@
             pointer-events: none;
             font-size: 16px;
         }
-
     </style>
 </head>
 <div class="container" style="text-align: center">
@@ -49,7 +44,7 @@
         <form>
             <div id="user">
 
-                <button class='button' data-value='Science Fiction'>Science-fiction</button>
+                <button class='button' data-value='Sci-Fi'>Science-fiction</button>
                 <button class='button' data-value='Adventure'>Aventure</button>
                 <button class='button' data-value='Drama'>Drame</button>
                 <button class='button' data-value='Action'>Action</button>
@@ -75,7 +70,6 @@
     var outerHeight = 500;
     var margin = {left: 90, top: 30, right: 30, bottom: 40};
     var barPadding = 0.2;
-
     var innerWidth = outerWidth - margin.left - margin.right;
     var innerHeight = outerHeight - margin.top - margin.bottom;
     var svg = d3.select("#stack")
@@ -87,20 +81,16 @@
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     var data;
-
-
     function render(genre, key) {
-
         g.selectAll(".serie").remove();
         // Compute summry values
         var nested = d3.nest()
             .key(function (d) {
-                if (d.release_date) {
-                    return +d.release_date.getFullYear();
+                if (d.title_year) {
+                    return d.title_year.getFullYear();
                 } else {
                     return "nodate";
                 }
-
             })
             .rollup(function (leaves) {
                 return {
@@ -109,10 +99,10 @@
                         return d[key];
                     }),
                     'total_sf': d3.sum(leaves, function (d) {
-                        var genres = JSON.parse(d.genres);
+                        var genres = d.genres.split("|");
                         is_sf = false;
                         genres.forEach(function (g) {
-                            if (g.name === genre) {
+                            if (g === genre) {
                                 is_sf = true;
                             }
                         });
@@ -123,11 +113,9 @@
             .entries(data);
         console.log(genre);
         console.log(nested);
-
         nested.sort(function (x, y) {
             return d3.ascending(+x.key, +y.key);
         });
-
         var s = d3.stack()
             .keys(["autre", "genre"])
             .value(function (d, key) {
@@ -138,9 +126,7 @@
                 }
             })
             (nested);
-
         console.log(s);
-
         xScale.domain(nested.map(function (d) {
             return d.key;
         }));
@@ -152,10 +138,8 @@
             //})
         ]).nice();
         //colorScale.domain();
-
         var tip = d3.select(".d3-tooltip")
             .style("visibility", "hidden");
-
         g.selectAll(".serie")
             .data(s)
             .enter().append("g")
@@ -195,49 +179,39 @@
             .on("mouseout", function (d) {
                 tip.style("visibility", "hidden")
             });
-
-
         g.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + innerHeight + ")")
             .call(d3.axisBottom(xScale));
-
         g.append("g")
             .attr("class", "axis")
             .call(d3.axisLeft(yScale).ticks(null, "s"))
-
-
     }
-
     function type(d) {
         return d;
     }
-
-
     function data_loaded(data_) {
         data = data_;
-        var date_format = d3.timeParse("%Y-%m-%d");
+        console.log(data_);
+        var date_format = d3.timeParse("%Y");
         data.forEach(function (d, i) {
-            d.release_date = date_format(d.release_date);
+            d.title_year = date_format(d.title_year);
         });
-
         // Filter years
         data = data.filter(function (d) {
-            if (d.release_date) {
-                return +d.release_date.getFullYear() > 1970;
+            if (d.title_year) {
+                return +d.title_year.getFullYear() > 1970;
             } else {
                 return false;
             }
         });
-        render("Science Fiction", "revenue");
+        render("Sci-Fi", "gross");
     }
-
     $(".button").click(function (e) {
         e.preventDefault();
         genre = $(this).attr("data-value");
-        render(genre, "revenue");
+        render(genre, "gross");
     });
-
-    d3.csv("tmdb_5000_movies.csv", type, data_loaded);
+    d3.csv("movie_IMDB.csv", type, data_loaded);
 </script>
 </html>
