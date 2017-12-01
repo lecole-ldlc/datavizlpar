@@ -49,11 +49,11 @@
         <form>
             <div id="user">
 
-                <button class = 'button' data-value='Science Fiction'>Science-fiction</button>
-                <button class = 'button' data-value='Adventure'>Aventure</button>
-                <button class = 'button' data-value ='Drama'>Drame</button>
-                <button class = 'button' data-value ='Action'>Action</button>
-                <button class = 'button' data-value ='Fantasy'>Fantasy</button>
+                <button class='button' data-value='Science Fiction'>Science-fiction</button>
+                <button class='button' data-value='Adventure'>Aventure</button>
+                <button class='button' data-value='Drama'>Drame</button>
+                <button class='button' data-value='Action'>Action</button>
+                <button class='button' data-value='Fantasy'>Fantasy</button>
             </div>
         </form>
     </div>
@@ -163,15 +163,6 @@
             .attr("fill", function (d) {
                 return colorScale(d.key);
             })
-            .on("mouseover", function (d) {
-                tip.html("<p>" + d.key + "</p>")
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px")
-                    .style("visibility", "visible")
-            })
-            .on("mouseout", function (d) {
-                tip.style("visibility", "hidden")
-            })
             .selectAll("rect")
             .data(function (d) {
                 return d;
@@ -187,6 +178,23 @@
                 return yScale(d[0]) - yScale(d[1]);
             })
             .attr("width", xScale.bandwidth())
+            .on("mouseover", function (d) {
+                console.log(d);
+                var format = d3.format(".2f");
+                var value;
+                if (d[1] == 100){
+                    value = d.data.value.total_sf;
+                } else {
+                    value = d.data.value.total - d.data.value.total_sf;
+                }
+                tip.html("<p>" + '' + " " + format(value/1000000000) + " B. $</p>")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px")
+                    .style("visibility", "visible")
+            })
+            .on("mouseout", function (d) {
+                tip.style("visibility", "hidden")
+            });
 
 
         g.append("g")
@@ -205,16 +213,7 @@
         return d;
     }
 
-    function refresh() {
-// trouver comment utiliser l'ID de chaque bouton au lieu de data_genre
-        console.log($(this))
-        $(".button").click(function (genre) {
 
-            genre = $(this).attr("data-value");
-
-            render(genre, "revenue");
-        });
-    }
     function data_loaded(data_) {
         data = data_;
         var date_format = d3.timeParse("%Y-%m-%d");
@@ -230,8 +229,14 @@
                 return false;
             }
         });
-        refresh()
+        render("Science Fiction", "revenue");
     }
+
+    $(".button").click(function (e) {
+        e.preventDefault();
+        genre = $(this).attr("data-value");
+        render(genre, "revenue");
+    });
 
     d3.csv("tmdb_5000_movies.csv", type, data_loaded);
 </script>
