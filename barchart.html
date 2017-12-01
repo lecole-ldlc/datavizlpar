@@ -59,14 +59,14 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="jumbotron">
-          <h1  class="text-center">L'évolution de la science-fiction</h1>
+          <h1  class="text-center">Evolution de la science-fiction</h1>
           <p  class="text-center">Moi je sers juste à introduire l'article. Personne ne me lis de toute manière. Passe ton chemin.</p>
         </div>
         <div class="jumbotron">
           
     <div class="input-field col s12" style="text-align: center">
               <h2>Normalized stack bar charts</h2>
-                              <p>Part des budgets des films de science-fiction par rapport au budget total</p>
+                              <p>Part des revenus des films selon le genre par rapport au budget total</p>
                               <br>
        
       <div class="col-xs-6" style="text-align: right">
@@ -100,7 +100,6 @@
     var outerHeight = 500;
     var margin = {left: 90, top: 30, right: 30, bottom: 40};
     var barPadding = 0.2;
-
     var innerWidth = outerWidth - margin.left - margin.right;
     var innerHeight = outerHeight - margin.top - margin.bottom;
     var svg = d3.select("#stack")
@@ -112,20 +111,16 @@
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     var data;
-
-
     function render(genre, key) {
-
         g.selectAll(".serie").remove();
         // Compute summry values
         var nested = d3.nest()
             .key(function (d) {
-                if (d.release_date) {
-                    return +d.release_date.getFullYear();
+                if (d.title_year) {
+                    return d.title_year.getFullYear();
                 } else {
                     return "nodate";
                 }
-
             })
             .rollup(function (leaves) {
                 return {
@@ -134,10 +129,10 @@
                         return d[key];
                     }),
                     'total_sf': d3.sum(leaves, function (d) {
-                        var genres = JSON.parse(d.genres);
+                        var genres = d.genres.split("|");
                         is_sf = false;
                         genres.forEach(function (g) {
-                            if (g.name === genre) {
+                            if (g === genre) {
                                 is_sf = true;
                             }
                         });
@@ -148,11 +143,9 @@
             .entries(data);
         console.log(genre);
         console.log(nested);
-
         nested.sort(function (x, y) {
             return d3.ascending(+x.key, +y.key);
         });
-
         var s = d3.stack()
             .keys(["autre", "genre"])
             .value(function (d, key) {
@@ -163,9 +156,7 @@
                 }
             })
             (nested);
-
         console.log(s);
-
         xScale.domain(nested.map(function (d) {
             return d.key;
         }));
@@ -177,10 +168,8 @@
             //})
         ]).nice();
         //colorScale.domain();
-
         var tip = d3.select(".d3-tooltip")
             .style("visibility", "hidden");
-
         g.selectAll(".serie")
             .data(s)
             .enter().append("g")
@@ -210,9 +199,9 @@
                 if (d[1] == 100){
                     value = d.data.value.total_sf;
                 } else {
-                    value = d.data.value.total - d.data.value.total_sf;
+                    value = d.data.value.total;
                 }
-                tip.html("<p>" + '' + " " + format(value/1000000000) + " B. $</p>")
+                tip.html("<p>" + '' + " " + format(value/1000000) + " M. $</p>")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px")
                     .style("visibility", "visible")
@@ -220,50 +209,40 @@
             .on("mouseout", function (d) {
                 tip.style("visibility", "hidden")
             });
-
-
         g.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + innerHeight + ")")
             .call(d3.axisBottom(xScale));
-
         g.append("g")
             .attr("class", "axis")
             .call(d3.axisLeft(yScale).ticks(null, "s"))
-
-
     }
-
     function type(d) {
         return d;
     }
-
-
     function data_loaded(data_) {
         data = data_;
-        var date_format = d3.timeParse("%Y-%m-%d");
+        console.log(data_);
+        var date_format = d3.timeParse("%Y");
         data.forEach(function (d, i) {
-            d.release_date = date_format(d.release_date);
+            d.title_year = date_format(d.title_year);
         });
-
         // Filter years
         data = data.filter(function (d) {
-            if (d.release_date) {
-                return +d.release_date.getFullYear() > 1970;
+            if (d.title_year) {
+                return +d.title_year.getFullYear() > 1970;
             } else {
                 return false;
             }
         });
-        render("Science Fiction", "revenue");
+        render("Sci-Fi", "gross");
     }
-
     $(".button").click(function (e) {
         e.preventDefault();
         genre = $(this).attr("data-value");
-        render(genre, "revenue");
+        render(genre, "gross");
     });
-
-    d3.csv("tmdb_5000_movies.csv", type, data_loaded);
+    d3.csv("movie_IMDB.csv", type, data_loaded);
 </script>
           
 			</div>
@@ -296,6 +275,7 @@
   <!-- Include all compiled plugins (below), or include individual files as needed --> 
   <script src="js/bootstrap.min.js"></script> 
   <script src="js/index.js"></script> 
+</div>
 </div>
 </body>
 </html>

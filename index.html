@@ -12,7 +12,7 @@
     <style>
         .axis text {
             font-family: "Helvetica Neue", Marker Felt, fantasy;
-            font-size: 11pt;
+            font-size: 8pt;
         }
         .axis .label {
             font-size: 20pt;
@@ -66,7 +66,7 @@
 </div>
 </body>
 <script>
-    var outerWidth = 2000;
+    var outerWidth = 1500;
     var outerHeight = 500;
     var margin = {left: 90, top: 30, right: 30, bottom: 40};
     var barPadding = 0.2;
@@ -171,7 +171,7 @@
                 } else {
                     value = d.data.value.total - d.data.value.total_sf;
                 }
-                tip.html("<p>" + '' + " " + format(value/1000000000) + " B. $</p>")
+                tip.html("<p>" + '' + " " + format(value/1000000) + " M $</p>")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px")
                     .style("visibility", "visible")
@@ -200,7 +200,7 @@
         // Filter years
         data = data.filter(function (d) {
             if (d.title_year) {
-                return +d.title_year.getFullYear() > 1970;
+                return +d.title_year.getFullYear() > 1975;
             } else {
                 return false;
             }

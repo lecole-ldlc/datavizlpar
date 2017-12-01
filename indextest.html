@@ -169,9 +169,9 @@
                 if (d[1] == 100){
                     value = d.data.value.total_sf;
                 } else {
-                    value = d.data.value.total - d.data.value.total_sf;
+                    value = d.data.value.total;
                 }
-                tip.html("<p>" + '' + " " + format(value/1000000000) + " B. $</p>")
+                tip.html("<p>" + '' + " " + format(value/1000000000) + " M. $</p>")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px")
                     .style("visibility", "visible")
@@ -215,3 +215,6 @@
     d3.csv("movie_IMDB.csv", type, data_loaded);
 </script>
 </html>
+
+
+
