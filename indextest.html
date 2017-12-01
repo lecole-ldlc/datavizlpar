@@ -49,11 +49,11 @@
         <form>
             <div id="user">
 
-                <button onClick='refresh()'  id = 'button 1' value ='Science Fiction'>Science-fiction</button>
-                <button onClick='refresh()'  id = 'button 2' value ='Adventure'>Aventure</button>
-                <button onClick='refresh()'  id = 'button 3' value ='Drama'>Drame</button>
-                <button onClick='refresh()'  id = 'button 4' value ='Action'>Action</button>
-                <button onClick='refresh()'  id = 'button 5' value ='Fantasy'>Fantasy</button>
+                <button class = 'button' data-value='Science Fiction'>Science-fiction</button>
+                <button class = 'button' data-value='Adventure'>Aventure</button>
+                <button class = 'button' data-value ='Drama'>Drame</button>
+                <button class = 'button' data-value ='Action'>Action</button>
+                <button class = 'button' data-value ='Fantasy'>Fantasy</button>
             </div>
         </form>
     </div>
@@ -205,11 +205,15 @@
         return d;
     }
 
-    function refresh(){
+    function refresh() {
 // trouver comment utiliser l'ID de chaque bouton au lieu de data_genre
+        console.log($(this))
+        $(".button").click(function (genre) {
 
-        genre = $("#data_genre").val();
-        render(genre, "revenue");
+            genre = $(this).attr("data-value");
+
+            render(genre, "revenue");
+        });
     }
     function data_loaded(data_) {
         data = data_;
