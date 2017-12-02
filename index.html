@@ -1,9 +1,15 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en-US">
 <head>
-    <meta charset="utf-8">
-    <title>Stacked Barchart</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light Theme</title>
+<link href="css/singlePageTemplate.css" rel="stylesheet" type="text/css">
+<!--The following script tag downloads a font from the Adobe Edge Web Fonts server for use within the web page. We recommend that you do not modify it.-->
+<script>var __adobewebfontsappname__="dreamweaver"</script>
+<script src="http://use.edgefonts.net/source-sans-pro:n2:default.js" type="text/javascript"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <script
             src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -12,7 +18,8 @@
     <style>
         .axis text {
             font-family: "Helvetica Neue", Marker Felt, fantasy;
-            font-size: 6pt;
+            font-size: 8pt;
+			font-style: normal
         }
         .axis .label {
             font-size: 20pt;
@@ -36,14 +43,31 @@
             font-size: 16px;
         }
     </style>
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<div class="container" style="text-align: center">
-    <H1>La Planche à Repasser</H1>
-    <p>Genres</p>
-    <div class="input-field col s12">
-        <form>
-            <div id="user">
+<body>
+<!-- Main Container -->
+<div class="container">
+  <!-- Navigation -->
+	<header>
+	<h1 style align="center">
+	La Planche à Repasser
+	</h1>
+  </header>
+  <!-- Hero Section -->
 
+  <!-- About Section -->
+  <section style align="center" >
+	  <h2> Lé film sa demende de larjan</h2>
+
+   <form>
+            <div id="user">
+				<p>Genres</p>
                 <button class='button' data-value='Sci-Fi'>Science-fiction</button>
                 <button class='button' data-value='Adventure'>Aventure</button>
                 <button class='button' data-value='Drama'>Drame</button>
@@ -51,22 +75,45 @@
                 <button class='button' data-value='Fantasy'>Fantasy</button>
             </div>
         </form>
-    </div>
-    <div class="container" style="text-align: center">
-        <h2>Normalized stack bar charts</h2>
 
-        <div class="row">
-            <div class="col-xs-12">
-                <p>Part des budgets des films de science-fiction par rapport au budget total</p>
-                <svg width="300" height="300" id="stack"></svg>
+  </section>
+      <div style align="center">
+      <section >
+
+ <svg width="300" height="300" id="stack"></svg>
                 <div class="d3-tooltip"></div>
-            </div>
-        </div>
-    </div>
+	</section>
+	</div>
+   <div style align="center">
+    <section >
+
+		<p> Part des recettes des films de Science-fiction dans les recettes totales des films par années (mondial) <br>
+Les films peuvent être multi-genre et se retrouver dans plusieurs catégories. De plus nous avons effectué une sélection sur les genres pour plus de visibilité
+<br><br>
+1977 : Premier pic important pour les recettes de la Science-fiction due à la Sortie de Star Wars épisode 4 : A New Hope.  On peut constater la place énorme du film dans les recettes de cette année indiquant l’importance du film.<br> Le film rapportera prêt de 461M de dollars pour 653 M de dollars pour les films de SF et 744 M pour tous les films.<br>
+	StarWars représentait donc prêt de 61% des revenues du cinéma mondial en 1977, la SF aurait-elle sauver le cinéma ? On peut le penser.
+<br><br>
+De 1977 à 1983 : La sortie des autres épisodes de la saga Star Wars en 1979 et 1983 permettront à la science-fiction de garder une bonne place en terme de recettes.
+<br><br>
+A partir de 1983 : une période de disette avec des films qui rapportent moins.
+<br>
+2009 : Avatar marque le début du renouveau pour la SF qui voit ses recettes augmenter à nouveau par rapport aux autres films. Les très gros budgets et la technologies nécessaires à ces films expliquent ces recettes en augmentation. <br>Les studios ont désormais les moyens de proposer de très grosses productions certes coûteuses mais qui rapportent beaucoup également : budget : $237,000,000 recette : 2,787,965,087$
+<br>
+<br>
+			Sources des données : <a href="https://www.kaggle.com/ankiijindae/imdb-movie-data">https://www.kaggle.com/ankiijindae/imdb-movie-data</a>
+ <br>
+ <br></p>
+  </section>
+  </div>
 </div>
+
+
+
+</div>
+<!-- Main Container Ends -->
 </body>
 <script>
-    var outerWidth = 1000;
+    var outerWidth = 1200;
     var outerHeight = 500;
     var margin = {left: 90, top: 30, right: 30, bottom: 40};
     var barPadding = 0.2;
