@@ -9,10 +9,12 @@
             src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3-time.v1.min.js"></script>
+    <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
     <style>
         .axis text {
             font-family: "Helvetica Neue", Marker Felt, fantasy;
-            font-size: 6pt;
+            font-size: 7pt;
         }
         .axis .label {
             font-size: 20pt;
@@ -80,7 +82,8 @@
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
-    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    var colorScale = d3.scaleOrdinal()
+        .range(["#0d1788", "#cbcbcb" ]);
     var data;
     function render(genre, key) {
         g.selectAll(".serie").remove();
@@ -183,7 +186,7 @@
         g.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + innerHeight + ")")
-            .call(d3.axisBottom(xScale));
+            .call(d3.axisBottom(xScale))
         g.append("g")
             .attr("class", "axis")
             .call(d3.axisLeft(yScale).ticks(null, "s"))

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Light Theme</title>
+<title>La Planche à Repasser</title>
 <link href="css/singlePageTemplate.css" rel="stylesheet" type="text/css">
 <!--The following script tag downloads a font from the Adobe Edge Web Fonts server for use within the web page. We recommend that you do not modify it.-->
 <script>var __adobewebfontsappname__="dreamweaver"</script>
@@ -55,14 +55,14 @@
 <div class="container">
   <!-- Navigation -->
 	<header>
-	<h1 style align="center">
+	<h1 align="center">
 	La Planche à Repasser
 	</h1>
   </header>
   <!-- Hero Section -->
 
   <!-- About Section -->
-  <section style align="center" >
+  <section  align="center" >
     <h2> Part des recettes des films de Science-fiction dans les recettes totales des films par années (mondial)</h2>
 
    <form>
@@ -76,14 +76,14 @@
         </form>
 
   </section>
-      <div style align="center">
+      <div  align="center">
       <section >
 
  <svg width="300" height="300" id="stack"></svg>
                 <div class="d3-tooltip"></div>
 	</section>
 	</div>
-   <div style align="center">
+   <div  align="center">
     <section >
 
 		<p>
@@ -125,7 +125,8 @@ A partir de 1983 : une période de disette avec des films qui rapportent moins.
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
     var yScale = d3.scaleLinear().range([innerHeight, 0]);
-    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    var colorScale = d3.scaleOrdinal()
+        .range(["#0d1788", "#cbcbcb" ]);
     var data;
     function render(genre, key) {
         g.selectAll(".serie").remove();
