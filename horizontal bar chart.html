@@ -68,7 +68,18 @@
                 .key(function (d){
                     return d.director_name;
             })
+                .rollup (function (leaves){
+                    return {
+                    'count' : leaves.length,
+                    'total' : d3.sum(leaves, function (d){
+                        return (d.director_name);
+                    })
+
+                }
+    })
                 .entries(data);
+
+            console.log(nested);
 
             x.domain([0, d3.max(data, function (d) {
                 return d.value;
