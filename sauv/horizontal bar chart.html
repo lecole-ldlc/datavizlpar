@@ -40,7 +40,7 @@
             <button class='button' data-value='avg_note'>Note</button>
             <button class='button' data-value='count'>nombre de films</button>
             <button class='button' data-value='total_gross'>Recettes</button>
-            <button class='button2' data-value='director_name' selected = true>Réalisateur</button>
+            <button class='button2' data-value='director_name'>Réalisateur</button>
             <button class='button2' data-value='country'>Pays</button>
         </div>
         <div class="row">
@@ -147,8 +147,9 @@
 
             var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-            nested.forEach(function (nested_year) {
-                $("#barchart" + nested_year.key).html('');
+            nested.forEach(function (nested_year){
+                $('#barchart'+ nested_year.key).html('')
+
                 var svg = d3.select("#barchart" + nested_year.key),
                     margin = {top: 20, right: 20, bottom: 30, left: 80},
                     width = +svg.attr("width") - margin.left - margin.right,
@@ -180,11 +181,14 @@
                 g.append("g")
                     .attr("class", "y axis")
                 //.call(d3.axisLeft(y));
+
                 g.selectAll(".bar")
                     .data(nested_year.values)
                     .enter().append("rect")
                     .attr("class", "bar")
                     .attr("x", 0)
+
+
                     .attr("fill", function (d) {
                         return color(d.key)
                     })
@@ -201,46 +205,33 @@
                             .style("left", d3.event.pageX - 50 + "px")
                             .style("top", d3.event.pageY - 70 + "px")
                             .style("display", "inline-block")
-                            .html( "" + tformat(d.value[y_key]) + "$");
+                            .html(d.key + "<br>" + "" + tformat(d.value[y_key]) + "$");
                     })
                     .on("mouseout", function (d) {
                         tooltip.style("display", "none");
-                    });
-                g.append("g").selectAll("text")
-                    .data(nested_year.values)
-                    .enter()
-                    .append("text")
-                    .attr('class', 'bar')
-                    .attr("pointer-events", "none")
-                    .attr("x", 0)
-                    .attr("y", function (d, i) {
-                        console.log(i);
-                        return y(i)+5;
                     })
-                    .attr('dy', '8')
-                    .text(function (d, i) {
-                        return d.key;
-                    })
+
+
+
             })
 
         });
 
 
     }
-        x_key = "country"
-    $(".button2").click(function (e) {
-        x_key = $(this).attr("data-value");
-        barchart(y_key, x_key);
-    });
 
     $(".button").click(function (e) {
-
+        x_key = "country"
         y_key = $(this).attr("data-value");
         barchart(y_key, x_key);
 
 
     });
 
+        $(".button2").click(function (e) {
+            x_key = $(this).attr("data-value");
+            barchart(y_key, x_key);
+    });
 
 
 </script>
