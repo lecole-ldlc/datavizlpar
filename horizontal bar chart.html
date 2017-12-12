@@ -34,7 +34,13 @@
 
     <div class="container" style="text-align: center">
         <h2>Barchart</h2>
+        <div id="user">
 
+            <button class='button' data-value='total_budget'>Budget</button>
+            <button class='button' data-value='avg_note'>Note</button>
+            <button class='button' data-value='count'>nombre de films</button>
+            <button class='button' data-value='total_gross'>Recettes</button>
+        </div>
         <div class="row">
             <div class="col-xs-4">
                     <h2>Année 2000</h2>
@@ -48,19 +54,24 @@
                 <h2>Année 1960</h2>
                 <svg width="300" height="300" id="barchart1960"></svg>
             </div>
+            <div class="col-xs-12">
+                <svg width="300" height="300" id="barchart2"></svg>
+            </div>
+            <div class="col-xs-12">
+                <svg width="300" height="300" id="barchart3"></svg>
+            </div>
         </div>
     </div>
 </div>
 
 </body>
 <script>
-    function barchart() {
+    function barchart(y_key) {
 
 
         var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
 
-        var y_key = "total_gross";
 
 
         d3.csv("movie_IMDB.csv", function (error, data) {
@@ -199,8 +210,20 @@
             })
 
         });
+
+
     }
 
-    barchart();
+    $(".button").click(function (e) {
+
+        y_key = $(this).attr("data-value");
+        barchart(y_key);
+        $('#barchart2000').html('');
+        $('#barchart1980').html('');
+        $('#barchart1960').html('');
+    });
+
+
+
 </script>
 </html>

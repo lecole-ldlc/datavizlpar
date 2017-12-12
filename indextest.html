@@ -214,8 +214,23 @@
     $(".button").click(function (e) {
         e.preventDefault();
         genre = $(this).attr("data-value");
+
+        $(".com").toggle('slow', function() {
+            //animation
+        });
+
         render(genre, "gross");
+        showdiv(genre);
+        }
     });
+function showdiv(genre){
+    if
+}
     d3.csv("movie_IMDB.csv", type, data_loaded);
 </script>
+<div id = "sf" style = "display:none" class="com">
+   <p>blablabla sf</p>
+</div>
+<div id = "action" style = "display:none" class="com">
+    <p>blablabla action</p>
 </html>
