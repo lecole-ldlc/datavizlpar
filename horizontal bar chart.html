@@ -37,12 +37,15 @@
 
         <div class="row">
             <div class="col-xs-4">
+                    <h2>Année 2000</h2>
                 <svg width="300" height="300" id="barchart2000"></svg>
             </div>
             <div class="col-xs-4">
+                <h2>Année 1980</h2>
                 <svg width="300" height="300" id="barchart1980"></svg>
             </div>
             <div class="col-xs-4">
+                <h2>Année 1960</h2>
                 <svg width="300" height="300" id="barchart1960"></svg>
             </div>
         </div>
@@ -57,7 +60,7 @@
         var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
 
-        var y_key = "count";
+        var y_key = "total_gross";
 
 
         d3.csv("movie_IMDB.csv", function (error, data) {

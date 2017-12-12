@@ -1,264 +1,206 @@
 <!doctype html>
 <html lang="en-US">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>La Planche à Repasser</title>
-<link href="css/singlePageTemplate.css" rel="stylesheet" type="text/css">
-<!--The following script tag downloads a font from the Adobe Edge Web Fonts server for use within the web page. We recommend that you do not modify it.-->
-<script>var __adobewebfontsappname__="dreamweaver"</script>
-<script src="http://use.edgefonts.net/source-sans-pro:n2:default.js" type="text/javascript"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>La Planche à Repasser</title>
+    <link href="css/singlePageTemplate.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <!--The following script tag downloads a font from the Adobe Edge Web Fonts server for use within the web page. We recommend that you do not modify it.-->
+    <script>var __adobewebfontsappname__ = "dreamweaver"</script>
+    <script src="http://use.edgefonts.net/source-sans-pro:n2:default.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <script
             src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
     <style>
-        .axis text {
-            font-family: "Helvetica Neue", Marker Felt, fantasy;
-            font-size: 8pt;
-			font-style: normal
-        }
-        .axis .label {
-            font-size: 20pt;
-        }
-        .axis path, .axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-        div.d3-tooltip {
+        .toolTip {
             position: absolute;
+            display: none;
+            min-width: 80px;
+            height: auto;
+            background: none repeat scroll 0 0 #ffffff;
+            border: 1px solid #6F257F;
+            padding: 14px;
             text-align: center;
-            width: 100px;
-            height: 40px;
-            padding: 2px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 0px;
-            border-radius: 8px;
-            pointer-events: none;
-            font-size: 16px;
         }
     </style>
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
 <body>
-<!-- Main Container -->
-<div class="container">
-  <!-- Navigation -->
-	<header>
-	<h1 align="center">
-	La Planche à Repasser
-	</h1>
-  </header>
-  <!-- Hero Section -->
+<div class="container" style="text-align: center">
+    <H1>La Planche à Repasser</H1>
 
-  <!-- About Section -->
-  <section  align="center" >
-    <h2> Part des recettes des films de Science-fiction dans les recettes totales des films par années (mondial)</h2>
+    <div class="container" style="text-align: center">
+        <h2>Barchart</h2>
 
-   <form>
-            <div id="user">
-                <button class='button' data-value='Sci-Fi'>Science-fiction</button>
-                <button class='button' data-value='Adventure'>Aventure</button>
-                <button class='button' data-value='Drama'>Drame</button>
-                <button class='button' data-value='Action'>Action</button>
-                <button class='button' data-value='Fantasy'>Fantasy</button>
+        <div class="row">
+            <div class="col-xs-4">
+                    <h2>Année 2000</h2>
+                <svg width="300" height="300" id="barchart2000"></svg>
             </div>
-        </form>
-
-  </section>
-      <div  align="center">
-      <section >
-
- <svg width="300" height="300" id="stack"></svg>
-                <div class="d3-tooltip"></div>
-	</section>
-	</div>
-   <div  align="center">
-    <section >
-
-		<p>
-Les films peuvent être multi-genre et se retrouver dans plusieurs catégories. De plus nous avons effectué une sélection sur les genres pour plus de visibilité
-<br><br>
-1977 : Premier pic important pour les recettes de la Science-fiction due à la Sortie de Star Wars épisode 4 : A New Hope.  On peut constater la place énorme du film dans les recettes de cette année indiquant l’importance du film.<br> Le film rapportera prêt de 461M de dollars pour 653 M de dollars pour les films de SF et 744 M pour tous les films.<br>
-	StarWars représentait donc prêt de 61% des revenues du cinéma mondial en 1977, la SF aurait-elle sauver le cinéma ? On peut le penser.
-<br><br>
-De 1977 à 1983 : La sortie des autres épisodes de la saga Star Wars en 1979 et 1983 permettront à la science-fiction de garder une bonne place en terme de recettes.
-<br><br>
-A partir de 1983 : une période de disette avec des films qui rapportent moins.
-<br>
-2009 : Avatar marque le début du renouveau pour la SF qui voit ses recettes augmenter à nouveau par rapport aux autres films. Les très gros budgets et la technologies nécessaires à ces films expliquent ces recettes en augmentation. <br>Les studios ont désormais les moyens de proposer de très grosses productions certes coûteuses mais qui rapportent beaucoup également : budget : $237,000,000 recette : 2,787,965,087$
-<br>
-<br>
-			Sources des données : <a href="https://www.kaggle.com/ankiijindae/imdb-movie-data">https://www.kaggle.com/ankiijindae/imdb-movie-data</a>
- <br>
- <br></p>
-  </section>
-  </div>
+            <div class="col-xs-4">
+                <h2>Année 1980</h2>
+                <svg width="300" height="300" id="barchart1980"></svg>
+            </div>
+            <div class="col-xs-4">
+                <h2>Année 1960</h2>
+                <svg width="300" height="300" id="barchart1960"></svg>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-
-</div>
-<!-- Main Container Ends -->
 </body>
 <script>
-    var outerWidth = 1200;
-    var outerHeight = 500;
-    var margin = {left: 90, top: 30, right: 30, bottom: 40};
-    var barPadding = 0.2;
-    var innerWidth = outerWidth - margin.left - margin.right;
-    var innerHeight = outerHeight - margin.top - margin.bottom;
-    var svg = d3.select("#stack")
-        .attr("width", outerWidth)
-        .attr("height", outerHeight);
-    var g = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var xScale = d3.scaleBand().rangeRound([0, innerWidth]).paddingInner(barPadding);
-    var yScale = d3.scaleLinear().range([innerHeight, 0]);
-    var colorScale = d3.scaleOrdinal()
-        .range(["#0d1788", "#cbcbcb" ]);
-    var data;
-    function render(genre, key) {
-        g.selectAll(".serie").remove();
-        // Compute summry values
-        var nested = d3.nest()
-            .key(function (d) {
-                if (d.title_year) {
-                    return d.title_year.getFullYear();
-                } else {
-                    return "nodate";
-                }
-            })
-            .rollup(function (leaves) {
-                return {
-                    'count': leaves.length,
-                    'total': d3.sum(leaves, function (d) {
-                        return d[key];
-                    }),
-                    'total_sf': d3.sum(leaves, function (d) {
-                        var genres = d.genres.split("|");
-                        is_sf = false;
-                        genres.forEach(function (g) {
-                            if (g === genre) {
-                                is_sf = true;
-                            }
-                        });
-                        return is_sf ? d[key] : 0;
-                    })
-                }
-            })
-            .entries(data);
-        console.log(genre);
-        console.log(nested);
-        nested.sort(function (x, y) {
-            return d3.ascending(+x.key, +y.key);
-        });
-        var s = d3.stack()
-            .keys(["autre", "genre"])
-            .value(function (d, key) {
-                if (key == "autre") {
-                    return (d.value.total - d.value.total_sf) / d.value.total * 100;
-                } else {
-                    return d.value.total_sf / d.value.total * 100;
-                }
-            })
-            (nested);
-        console.log(s);
-        xScale.domain(nested.map(function (d) {
-            return d.key;
-        }));
-        yScale.domain([
-            0,
-            100
-            //d3.max(nested, function (d) {
-            //    return d.value.budget_total;
-            //})
-        ]).nice();
-        //colorScale.domain();
-        var tip = d3.select(".d3-tooltip")
-            .style("visibility", "hidden");
-        g.selectAll(".serie")
-            .data(s)
-            .enter().append("g")
-            .attr("class", "serie")
-            .attr("fill", function (d) {
-                return colorScale(d.key);
-            })
-            .selectAll("rect")
-            .data(function (d) {
-                return d;
-            })
-            .enter().append("rect")
-            .attr("x", function (d) {
-                return xScale(d.data.key);
-            })
-            .attr("y", function (d) {
-                return yScale(d[1]);
-            })
-            .attr("height", function (d) {
-                return yScale(d[0]) - yScale(d[1]);
-            })
-            .attr("width", xScale.bandwidth())
-            .on("mouseover", function (d) {
-                console.log(d);
-                var format = d3.format(".2f");
-                var value;
-                if (d[1] == 100){
-                    value = d.data.value.total_sf;
-                } else {
-                    value = d.data.value.total - d.data.value.total_sf;
-                }
-                tip.html("<p>" + '' + " " + format(value/1000000) + " M $</p>")
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px")
-                    .style("visibility", "visible")
-            })
-            .on("mouseout", function (d) {
-                tip.style("visibility", "hidden")
+    function barchart() {
+
+
+        var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+
+        var y_key = "total_gross";
+
+
+        d3.csv("movie_IMDB.csv", function (error, data) {
+            if (error) throw error;
+
+            data = data.filter(function (d) {
+                var genres = d.genres.split("|");
+                is_sf = false;
+                genres.forEach(function (g) {
+                    if (g === "Sci-Fi") {
+                        is_sf = true;
+                    }
+                });
+                return is_sf;
             });
-        g.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + innerHeight + ")")
-            .call(d3.axisBottom(xScale));
-        g.append("g")
-            .attr("class", "axis")
-            .call(d3.axisLeft(yScale).ticks(null, "s"))
-    }
-    function type(d) {
-        return d;
-    }
-    function data_loaded(data_) {
-        data = data_;
-        console.log(data_);
-        var date_format = d3.timeParse("%Y");
-        data.forEach(function (d, i) {
-            d.title_year = date_format(d.title_year);
+
+            var date_format = d3.timeParse("%Y");
+            data.forEach(function (d, i) {
+                d.title_year = date_format(d.title_year);
+            });
+            // Filter years
+            data = data.filter(function (d) {
+                if (d.title_year) {
+                    return +d.title_year.getFullYear() > 1960;
+                } else {
+                    return false;
+                }
+            });
+            console.log(data);
+            var nested = d3.nest()
+                .key(function (d) {
+                    if (d.title_year) {
+                        return Math.floor(d.title_year.getFullYear() / 20) * 20;
+                    } else {
+                        return "nodate";
+                    }
+                })
+                .key(function (d) {
+                    return d.director_name;
+                })
+
+                .rollup(function (leaves) {
+                    return {
+                        'count': leaves.length,
+                        //'total': d3.sum(leaves, function (d) {
+                        //return (d.director_name);
+                        //}),
+                        'total_budget': d3.sum(leaves, function (d) {
+                            return (d.budget);
+
+                        }),
+                        'avg_note': d3.mean(leaves, function (d) {
+                            return (+d.imdb_score);
+                        }),
+                        'total_gross': d3.sum(leaves, function (d) {
+                            return (d.gross);
+                        }),
+                        'films': leaves.map(function (d) {
+                            return d.movie_title
+                        })
+                    }
+                })
+                .entries(data);
+
+            nested.forEach(function (n) {
+                console.log(n);
+                n.values.sort(function (a, b) {
+                    return d3.descending(a.value[y_key], b.value[y_key])
+                });
+            });
+
+            console.log(nested);
+
+            var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+            nested.forEach(function (nested_year) {
+
+                var svg = d3.select("#barchart" + nested_year.key),
+                    margin = {top: 20, right: 20, bottom: 30, left: 80},
+                    width = +svg.attr("width") - margin.left - margin.right,
+                    height = +svg.attr("height") - margin.top - margin.bottom;
+
+                var g = svg.append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                var x = d3.scaleLinear().range([0, width]);
+                var y = d3.scaleBand().range([height, 0]);
+
+
+                nested_year.values = nested_year.values.slice(0, 5);
+                y.domain([4, 3, 2, 1, 0]).padding(0.1);
+                x.domain([0, d3.max(nested_year.values, function (d) {
+                    return d.value[y_key];
+                })]).nice();
+
+
+                console.log(nested_year);
+                var tformat = d3.format(".0s");
+                g.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x).ticks(3).tickFormat(function (d) {
+                        return tformat(+d);
+                    }).tickSizeInner([-height]));
+
+                g.append("g")
+                    .attr("class", "y axis")
+                    //.call(d3.axisLeft(y));
+
+                g.selectAll(".bar")
+                    .data(nested_year.values)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", 0)
+                    .attr("fill", function(d){
+                        return color(d.key)
+                    })
+                    .attr("height", y.bandwidth())
+                    .attr("y", function (d, i) {
+                        console.log(i);
+                        return y(i);
+                    })
+                    .attr("width", function (d) {
+                        return x(d.value[y_key]);
+                    })
+                    .on("mousemove", function (d) {
+                        tooltip
+                            .style("left", d3.event.pageX - 50 + "px")
+                            .style("top", d3.event.pageY - 70 + "px")
+                            .style("display", "inline-block")
+                            .html(d.key + "<br>" + "" + tformat(d.value[y_key]) + "$");
+                    })
+                    .on("mouseout", function (d) {
+                        tooltip.style("display", "none");
+                    });
+            })
+
         });
-        // Filter years
-        data = data.filter(function (d) {
-            if (d.title_year) {
-                return +d.title_year.getFullYear() > 1975;
-            } else {
-                return false;
-            }
-        });
-        render("Sci-Fi", "gross");
     }
-    $(".button").click(function (e) {
-        e.preventDefault();
-        genre = $(this).attr("data-value");
-        render(genre, "gross");
-    });
-    d3.csv("movie_IMDB.csv", type, data_loaded);
+
+    barchart();
 </script>
 </html>
