@@ -43,7 +43,7 @@
         </div>
         <div class="row">
             <div class="col-xs-4">
-                    <h2>Année 2000</h2>
+                <h2>Année 2000</h2>
                 <svg width="300" height="300" id="barchart2000"></svg>
             </div>
             <div class="col-xs-4">
@@ -157,13 +157,13 @@
                     }).tickSizeInner([-height]));
                 g.append("g")
                     .attr("class", "y axis")
-                    //.call(d3.axisLeft(y));
+                //.call(d3.axisLeft(y));
                 g.selectAll(".bar")
                     .data(nested_year.values)
                     .enter().append("rect")
                     .attr("class", "bar")
                     .attr("x", 0)
-                    .attr("fill", function(d){
+                    .attr("fill", function (d) {
                         return color(d.key)
                     })
                     .attr("height", y.bandwidth())
@@ -179,20 +179,35 @@
                             .style("left", d3.event.pageX - 50 + "px")
                             .style("top", d3.event.pageY - 70 + "px")
                             .style("display", "inline-block")
-                            .html(d.key + "<br>" + "" + tformat(d.value[y_key]) + "$");
+                            .html( "" + tformat(d.value[y_key]) + "$");
                     })
                     .on("mouseout", function (d) {
                         tooltip.style("display", "none");
                     });
+                g.append("g").selectAll("text")
+                    .data(nested_year.values)
+                    .enter()
+                    .append("text")
+                    .attr('class', 'bar')
+                    .attr("pointer-events", "none")
+                    .attr("x", 0)
+                    .attr("y", function (d, i) {
+                        console.log(i);
+                        return y(i)+5;
+                    })
+                    .attr('dy', '8')
+                    .text(function (d, i) {
+                        return d.key;
+                    })
             })
+            });
+        }
+        $(".button").click(function (e) {
+            y_key = $(this).attr("data-value");
+            barchart(y_key);
+            $('#barchart2000').html('');
+            $('#barchart1980').html('');
+            $('#barchart1960').html('');
         });
-    }
-    $(".button").click(function (e) {
-        y_key = $(this).attr("data-value");
-        barchart(y_key);
-        $('#barchart2000').html('');
-        $('#barchart1980').html('');
-        $('#barchart1960').html('');
-    });
 </script>
 </html>
