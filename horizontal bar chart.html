@@ -40,8 +40,10 @@
             <button class='button' data-value='avg_note'>Note</button>
             <button class='button' data-value='count'>nombre de films</button>
             <button class='button' data-value='total_gross'>Recettes</button>
-            <button class='button2' data-value='director_name' selected = true>Réalisateur</button>
+            <button class='button2' data-value='director_name' selected=true>Réalisateur</button>
             <button class='button2' data-value='country'>Pays</button>
+            <button class='button2' data-value='movie_title'>Titre Film</button>
+            <button class='button2' data-value='actor_1_name'>Acteur principal</button>
         </div>
         <div class="row">
             <div class="col-xs-4">
@@ -68,166 +70,191 @@
 
 </body>
 <script>
+    var data;
+
     function barchart(y_key, x_key) {
 
+        console.log(data);
 
         var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
 
-        d3.csv("movie_IMDB.csv", function (error, data) {
-            if (error) throw error;
-
-            data = data.filter(function (d) {
-                var genres = d.genres.split("|");
-                is_sf = false;
-                genres.forEach(function (g) {
-                    if (g === "Sci-Fi") {
-                        is_sf = true;
-                    }
-                });
-                return is_sf;
-            });
-
-            var date_format = d3.timeParse("%Y");
-            data.forEach(function (d, i) {
-                d.title_year = date_format(d.title_year);
-            });
-            // Filter years
-            data = data.filter(function (d) {
+        var nested = d3.nest()
+            .key(function (d) {
                 if (d.title_year) {
-                    return +d.title_year.getFullYear() > 1960;
+                    return Math.floor(d.title_year.getFullYear() / 20) * 20;
                 } else {
-                    return false;
+                    return "nodate";
                 }
-            });
-            console.log(data);
-            var nested = d3.nest()
-                .key(function (d) {
-                    if (d.title_year) {
-                        return Math.floor(d.title_year.getFullYear() / 20) * 20;
-                    } else {
-                        return "nodate";
-                    }
-                })
-                .key(function (d) {
-                    return d[x_key];
-                })
-
-                .rollup(function (leaves) {
-                    return {
-                        'count': leaves.length,
-                        //'total': d3.sum(leaves, function (d) {
-                        //return (d.director_name);
-                        //}),
-                        'total_budget': d3.sum(leaves, function (d) {
-                            return (d.budget);
-
-                        }),
-                        'avg_note': d3.mean(leaves, function (d) {
-                            return (+d.imdb_score);
-                        }),
-                        'total_gross': d3.sum(leaves, function (d) {
-                            return (d.gross);
-                        }),
-                        'films': leaves.map(function (d) {
-                            return d.movie_title
-                        })
-                    }
-                })
-                .entries(data);
-
-            nested.forEach(function (n) {
-                console.log(n);
-                n.values.sort(function (a, b) {
-                    return d3.descending(a.value[y_key], b.value[y_key])
-                });
-            });
-
-            console.log(nested);
-
-            var color = d3.scaleOrdinal(d3.schemeCategory20);
-
-            nested.forEach(function (nested_year) {
-                $("#barchart" + nested_year.key).html('');
-                var svg = d3.select("#barchart" + nested_year.key),
-                    margin = {top: 20, right: 20, bottom: 30, left: 80},
-                    width = +svg.attr("width") - margin.left - margin.right,
-                    height = +svg.attr("height") - margin.top - margin.bottom;
-
-                var g = svg.append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                var x = d3.scaleLinear().range([0, width]);
-                var y = d3.scaleBand().range([height, 0]);
-
-
-                nested_year.values = nested_year.values.slice(0, 5);
-                y.domain([4, 3, 2, 1, 0]).padding(0.1);
-                x.domain([0, d3.max(nested_year.values, function (d) {
-                    return d.value[y_key];
-                })]).nice();
-
-
-                console.log(nested_year);
-                var tformat = d3.format(".0s");
-                g.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x).ticks(3).tickFormat(function (d) {
-                        return tformat(+d);
-                    }).tickSizeInner([-height]));
-
-                g.append("g")
-                    .attr("class", "y axis")
-                //.call(d3.axisLeft(y));
-                g.selectAll(".bar")
-                    .data(nested_year.values)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", 0)
-                    .attr("fill", function (d) {
-                        return color(d.key)
-                    })
-                    .attr("height", y.bandwidth())
-                    .attr("y", function (d, i) {
-                        console.log(i);
-                        return y(i);
-                    })
-                    .attr("width", function (d) {
-                        return x(d.value[y_key]);
-                    })
-                    .on("mousemove", function (d) {
-                        tooltip
-                            .style("left", d3.event.pageX - 50 + "px")
-                            .style("top", d3.event.pageY - 70 + "px")
-                            .style("display", "inline-block")
-                            .html( "" + tformat(d.value[y_key]) + "$");
-                    })
-                    .on("mouseout", function (d) {
-                        tooltip.style("display", "none");
-                    });
-                g.append("g").selectAll("text")
-                    .data(nested_year.values)
-                    .enter()
-                    .append("text")
-                    .attr('class', 'bar')
-                    .attr("pointer-events", "none")
-                    .attr("x", 4)
-                    .attr("y", function (d, i) {
-                        console.log(i);
-                        return y(i)+10;
-                    })
-                    .attr('dy', '8')
-                    .text(function (d, i) {
-                        return d.key;
-                    })
+            })
+            .key(function (d) {
+                return d[x_key];
             })
 
+            .rollup(function (leaves) {
+                return {
+                    'count': leaves.length,
+                    //'total': d3.sum(leaves, function (d) {
+                    //return (d.director_name);
+                    //}),
+                    'total_budget': d3.sum(leaves, function (d) {
+                        return (d.budget);
+
+                    }),
+                    'avg_note': d3.mean(leaves, function (d) {
+                        return (+d.imdb_score);
+                    }),
+                    'total_gross': d3.sum(leaves, function (d) {
+                        return (d.gross);
+                    }),
+                    'films': leaves.map(function (d) {
+                        return d.movie_title
+                    })
+                }
+            })
+            .entries(data);
+
+        nested.forEach(function (n) {
+            console.log(n);
+            n.values.sort(function (a, b) {
+                return d3.descending(a.value[y_key], b.value[y_key])
+            });
         });
+
+        console.log(nested);
+
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+        nested.forEach(function (nested_year) {
+            $("#barchart" + nested_year.key).html('');
+            var svg = d3.select("#barchart" + nested_year.key),
+                margin = {top: 20, right: 20, bottom: 30, left: 80},
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom;
+
+            var g = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleBand().range([height, 0]);
+
+
+            nested_year.values = nested_year.values.slice(0, 5);
+            y.domain([4, 3, 2, 1, 0]).padding(0.1);
+            x.domain([0, d3.max(nested_year.values, function (d) {
+                return d.value[y_key];
+            })]).nice();
+
+
+            console.log(nested_year);
+            var tformat = d3.format(".0s");
+            g.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x).ticks(3).tickFormat(function (d) {
+                    return tformat(+d);
+                }).tickSizeInner([-height]));
+
+            g.append("g")
+                .attr("class", "y axis");
+            //.call(d3.axisLeft(y));
+            var bars = g.selectAll(".bar")
+                .data(nested_year.values)
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", 0)
+                .attr("fill", function (d) {
+                    return color(d.key)
+                })
+                .attr("height", y.bandwidth())
+                .attr("y", function (d, i) {
+                    console.log(i);
+                    return y(i);
+                })
+                .attr("width", function (d) {
+                    return 0;
+                })
+
+                .on("mousemove", function (d) {
+                    tooltip
+                        .style("left", d3.event.pageX - 50 + "px")
+                        .style("top", d3.event.pageY - 70 + "px")
+                        .style("display", "inline-block")
+                        .html("" + tformat(d.value[y_key]) + "$");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.style("display", "none");
+                })
+                .transition()
+                .ease(d3.easeQuad)
+                .duration(300)
+                .attr("width", function (d) {
+                    return x(d.value[y_key]);
+                });
+
+            bars.exit()
+                .transition()
+                .ease(d3.easeExp)
+                .duration(3000)
+                .attr("width", 0)
+                .remove()
+
+
+            g.append("g").selectAll("text")
+                .data(nested_year.values)
+                .enter()
+                .append("text")
+
+                .attr('class', 'bar')
+                .attr("pointer-events", "none")
+                .attr("x", 4)
+                .attr("y", function (d, i) {
+                    console.log(i);
+                    return y(i) + 10;
+                })
+                .attr('dy', '8')
+                .text(function (d, i) {
+                    return d.key;
+                })
+        })
 
 
     }
-        x_key = "country"
+    function data_loaded(datafull) {
+        data = datafull;
+
+
+        var date_format = d3.timeParse("%Y");
+        data.forEach(function (d, i) {
+            d.title_year = date_format(d.title_year);
+        });
+        // Filter years
+        data = data.filter(function (d) {
+            if (d.title_year) {
+                return +d.title_year.getFullYear() > 1960;
+            } else {
+                return false;
+            }
+        });
+        console.log(data);
+        data = data.filter(function (d) {
+            var genres = d.genres.split("|");
+            is_sf = false;
+            genres.forEach(function (g) {
+                if (g === "Sci-Fi") {
+                    is_sf = true;
+                }
+            });
+            return is_sf;
+        });
+        y_key = "total_budget"
+        x_key = "director_name"
+        //affichage par défaut
+        barchart(y_key, x_key);
+    }
+
+
     $(".button2").click(function (e) {
         x_key = $(this).attr("data-value");
         barchart(y_key, x_key);
@@ -240,8 +267,7 @@
 
 
     });
-
-
+    d3.csv("movie_IMDB.csv", data_loaded);
 
 </script>
 </html>

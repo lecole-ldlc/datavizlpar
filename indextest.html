@@ -85,6 +85,7 @@
     var colorScale = d3.scaleOrdinal()
         .range(["#0d1788", "#cbcbcb" ]);
     var data;
+    console.log(data);
     function render(genre, key) {
         g.selectAll(".serie").remove();
         // Compute summry values
@@ -195,7 +196,7 @@
         return d;
     }
     function data_loaded(data_) {
-        data = data_;
+            data = data_;
         console.log(data_);
         var date_format = d3.timeParse("%Y");
         data.forEach(function (d, i) {
