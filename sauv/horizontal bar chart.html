@@ -1,238 +1,264 @@
 <!doctype html>
 <html lang="en-US">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>La Planche à Repasser</title>
-    <link href="css/singlePageTemplate.css" rel="stylesheet" type="text/css">
-    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
-    <!--The following script tag downloads a font from the Adobe Edge Web Fonts server for use within the web page. We recommend that you do not modify it.-->
-    <script>var __adobewebfontsappname__ = "dreamweaver"</script>
-    <script src="http://use.edgefonts.net/source-sans-pro:n2:default.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <script
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Planche à Repasser</title>
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="css/custom.css" rel="stylesheet" type="text/css">
+<!--The following script tag downloads a font from the Adobe Edge Web Fonts server for use within the web page. We recommend that you do not modify it.-->
+<script>var __adobewebfontsappname__ = "dreamweaver"</script>
+<script src="http://use.edgefonts.net/source-sans-pro:n2:default.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<script
             src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
-    <style>
-        .toolTip {
-            position: absolute;
-            display: none;
-            min-width: 80px;
-            height: auto;
-            background: none repeat scroll 0 0 #ffffff;
-            border: 1px solid #6F257F;
-            padding: 14px;
-            text-align: center;
-        }
-    </style>
+<style>
+.toolTip {
+	position: absolute;
+	display: none;
+	min-width: 80px;
+	height: auto;
+	background: none repeat scroll 0 0 #ffffff;
+	border: 1px solid #6F257F;
+	padding: 4px;
+	text-align: center;
+	color: #2F2F2F;
+	font-family: "Catamaran Bold", sans-serif;
+}
+a {
+	text-align: center;
+}
+</style>
 <body>
-<div class="container" style="text-align: center">
-    <H1>La Planche à Repasser</H1>
-
-    <div class="container" style="text-align: center">
-        <h2>Barchart</h2>
-        <div id="user">
-
-            <button class='button' data-value='total_budget'>Budget</button>
-            <button class='button' data-value='avg_note'>Note</button>
-            <button class='button' data-value='count'>nombre de films</button>
-            <button class='button' data-value='total_gross'>Recettes</button>
-            <button class='button2' data-value='director_name'>Réalisateur</button>
-            <button class='button2' data-value='country'>Pays</button>
+<div class="container" style="text-align: center"> <br>
+  <DIV class="image"> <img style="border-top-right-radius: 25px;border-top-left-radius: 25px;" src="https://laplanchearepasser.fr/wp-content/uploads/2017/12/NewNoelBan.jpg" alt"La Planche à Repasser" height="200px" width="1140px">
+    <H1 style="color: #FFFFFF ; font-family:'Saira Bold', sans-serif">La Planche à Repasser</H1>
+  </div>
+  <div class="jumbotron" style="background-color:#F4F4F4">
+    <h2 style="color:#1f1f1f">Barchart</h2>
+    <div class="row"  style="color:#1f1f1f">
+      <div class="col-xs-3"> </div>
+      <div style="background-color:#D7D7D7" class="col-xs-3">
+        <h3>Année 1960</h3>
+      </div>
+      <div style="background-color:#D7D7D7" class="col-xs-3">
+        <h3>Année 1980</h3>
+      </div>
+      <div style="background-color:#D7D7D7" class="col-xs-3">
+        <h3>Année 2000</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-3" ><br>
+          <a style="font-size:14px ; padding-left:74.4px ; padding-right:74.4px" class="button2" data-value="country">Pays</a> <br><br><br>
+          <a style="font-size:14px ;padding-left:39.8px ; padding-right:39.8px" class="button2" data-value="director_name">Réalisateur</a><br><br><br>
+        <a  style="font-size:14px ;padding-left:35.4px ; padding-right:35.4px" class="button2" data-value="movie_title">Titre du film</a> <br><br><br>
+        <a  style="font-size:14px ;padding-left:12.4px ; padding-right:12.4px" class="button2" data-value="actor_1_name">Acteur Principale</a> 
         </div>
-        <div class="row">
-            <div class="col-xs-4">
-                <h2>Année 2000</h2>
-                <svg width="300" height="300" id="barchart2000"></svg>
-            </div>
-            <div class="col-xs-4">
-                <h2>Année 1980</h2>
-                <svg width="300" height="300" id="barchart1980"></svg>
-            </div>
-            <div class="col-xs-4">
-                <h2>Année 1960</h2>
-                <svg width="300" height="300" id="barchart1960"></svg>
-            </div>
-            <div class="col-xs-12">
-                <svg width="300" height="300" id="barchart2"></svg>
-            </div>
-            <div class="col-xs-12">
-                <svg width="300" height="300" id="barchart3"></svg>
-            </div>
-        </div>
+      <div class="col-xs-3" style="background-color:#D7D7D7">
+        <svg width="250" height="300" id="barchart1960"></svg>
+      </div>
+      <div style="background-color:#D7D7D7" class="col-xs-3">
+        <svg width="250" height="300" id="barchart1980"></svg>
+      </div>
+      <div style="background-color:#D7D7D7" class="col-xs-3">
+        <svg width="250" height="300" id="barchart2000"></svg>
+      </div>
+    </div>
+    <div class="row">
+      
+    
+          
+      <div id="user">
+        <button style="font-size:14px" class='button' data-value='total_budget'>Budget</button>
+        <button style="font-size:14px" class='button' data-value='avg_note'>Note</button>
+        <button style="font-size:14px" class='button' data-value='count'>nombre de films</button>
+        <button style="font-size:14px" class='button' data-value='total_gross'>Recettes</button>
+      </div>
+    </div>
+    <div id="com" class="col-xs-12"></div>
     </div>
 </div>
-
 </body>
 <script>
+     var data;
     function barchart(y_key, x_key) {
-
-
+        console.log(data);
         var tooltip = d3.select("body").append("div").attr("class", "toolTip");
-
-
-        d3.csv("movie_IMDB.csv", function (error, data) {
-            if (error) throw error;
-
-            data = data.filter(function (d) {
-                var genres = d.genres.split("|");
-                is_sf = false;
-                genres.forEach(function (g) {
-                    if (g === "Sci-Fi") {
-                        is_sf = true;
-                    }
-                });
-                return is_sf;
-            });
-
-            var date_format = d3.timeParse("%Y");
-            data.forEach(function (d, i) {
-                d.title_year = date_format(d.title_year);
-            });
-            // Filter years
-            data = data.filter(function (d) {
+        var nested = d3.nest()
+            .key(function (d) {
                 if (d.title_year) {
-                    return +d.title_year.getFullYear() > 1960;
+                    return Math.floor(d.title_year.getFullYear() / 20) * 20;
                 } else {
-                    return false;
+                    return "nodate";
+                }
+            })
+            .key(function (d) {
+                return d[x_key];
+            })
+            .rollup(function (leaves) {
+                return {
+                    'count': leaves.length,
+                    //'total': d3.sum(leaves, function (d) {
+                    //return (d.director_name);
+                    //}),
+                    'total_budget': d3.sum(leaves, function (d) {
+                        return (d.budget);
+                    }),
+                    'avg_note': d3.mean(leaves, function (d) {
+                        return (+d.imdb_score);
+                    }),
+                    'total_gross': d3.sum(leaves, function (d) {
+                        return (d.gross);
+                    }),
+                    'films': leaves.map(function (d) {
+                        return d.movie_title
+                    })
+                }
+            })
+            .entries(data);
+        nested.forEach(function (n) {
+            console.log(n);
+            n.values.sort(function (a, b) {
+                return d3.descending(a.value[y_key], b.value[y_key])
+            });
+        });
+        console.log(nested);
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
+        nested.forEach(function (nested_year) {
+            $("#barchart" + nested_year.key).html('');
+            var svg = d3.select("#barchart" + nested_year.key),
+                margin = {top: 20, right: 20, bottom: 30, left: 0},
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom;
+            var g = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleBand().range([height, 0]);
+            nested_year.values = nested_year.values.slice(0, 5);
+            y.domain([4, 3, 2, 1, 0]).padding(0.1);
+            x.domain([0, d3.max(nested_year.values, function (d) {
+                return d.value[y_key];
+            })]).nice();
+            console.log(nested_year);
+            var tformat = d3.format(".0s");
+            g.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x).ticks(3).tickFormat(function (d) {
+                    return tformat(+d);
+                }).tickSizeInner([-height]));
+            g.append("g")
+                .attr("class", "y axis");
+            //.call(d3.axisLeft(y));
+            var bars = g.selectAll(".bar")
+                .data(nested_year.values)
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", 0)
+                .attr("fill", function (d) {
+                    return color(d.key)
+                })
+                .attr("height", y.bandwidth())
+                .attr("y", function (d, i) {
+                    console.log(i);
+                    return y(i);
+                })
+                .attr("width", function (d) {
+                    return 0;
+                })
+                .on("mousemove", function (d) {
+                    tooltip
+                        .style("left", d3.event.pageX - 50 + "px")
+                        .style("top", d3.event.pageY - 70 + "px")
+                        .style("display", "inline-block")
+                        .html("" + tformat(d.value[y_key]) + "$");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.style("display", "none");
+
+                })
+                .transition()
+                .ease(d3.easeQuad)
+                .duration(300)
+                .attr("width", function (d) {
+                    return x(d.value[y_key]);
+                });
+            bars.exit()
+                .transition()
+                .ease(d3.easeExp)
+                .duration(3000)
+                .attr("width", 0)
+                .remove()
+            g.append("g").selectAll("text")
+                .data(nested_year.values)
+                .enter()
+                .append("text")
+                .attr('class', 'bar')
+                .attr("pointer-events", "none")
+                .attr("x", 4)
+                .attr("y", function (d, i) {
+                    console.log(i);
+                    return y(i) + 10;
+                })
+                .attr('dy', '18')
+                .text(function (d, i) {
+                    return d.key;
+                })
+        })
+    }
+    function data_loaded(datafull) {
+        data = datafull;
+        var date_format = d3.timeParse("%Y");
+        data.forEach(function (d, i) {
+            d.title_year = date_format(d.title_year);
+        });
+        // Filter years
+        data = data.filter(function (d) {
+            if (d.title_year) {
+                return +d.title_year.getFullYear() > 1960;
+            } else {
+                return false;
+            }
+        });
+        console.log(data);
+        data = data.filter(function (d) {
+            var genres = d.genres.split("|");
+            is_sf = false;
+            genres.forEach(function (g) {
+                if (g === "Sci-Fi") {
+                    is_sf = true;
                 }
             });
-            console.log(data);
-            var nested = d3.nest()
-                .key(function (d) {
-                    if (d.title_year) {
-                        return Math.floor(d.title_year.getFullYear() / 20) * 20;
-                    } else {
-                        return "nodate";
-                    }
-                })
-                .key(function (d) {
-                    return d[x_key];
-                })
-
-                .rollup(function (leaves) {
-                    return {
-                        'count': leaves.length,
-                        //'total': d3.sum(leaves, function (d) {
-                        //return (d.director_name);
-                        //}),
-                        'total_budget': d3.sum(leaves, function (d) {
-                            return (d.budget);
-
-                        }),
-                        'avg_note': d3.mean(leaves, function (d) {
-                            return (+d.imdb_score);
-                        }),
-                        'total_gross': d3.sum(leaves, function (d) {
-                            return (d.gross);
-                        }),
-                        'films': leaves.map(function (d) {
-                            return d.movie_title
-                        })
-                    }
-                })
-                .entries(data);
-
-            nested.forEach(function (n) {
-                console.log(n);
-                n.values.sort(function (a, b) {
-                    return d3.descending(a.value[y_key], b.value[y_key])
-                });
-            });
-
-            console.log(nested);
-
-            var color = d3.scaleOrdinal(d3.schemeCategory20);
-
-            nested.forEach(function (nested_year){
-                $('#barchart'+ nested_year.key).html('')
-
-                var svg = d3.select("#barchart" + nested_year.key),
-                    margin = {top: 20, right: 20, bottom: 30, left: 80},
-                    width = +svg.attr("width") - margin.left - margin.right,
-                    height = +svg.attr("height") - margin.top - margin.bottom;
-
-                var g = svg.append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                var x = d3.scaleLinear().range([0, width]);
-                var y = d3.scaleBand().range([height, 0]);
-
-
-                nested_year.values = nested_year.values.slice(0, 5);
-                y.domain([4, 3, 2, 1, 0]).padding(0.1);
-                x.domain([0, d3.max(nested_year.values, function (d) {
-                    return d.value[y_key];
-                })]).nice();
-
-
-                console.log(nested_year);
-                var tformat = d3.format(".0s");
-                g.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x).ticks(3).tickFormat(function (d) {
-                        return tformat(+d);
-                    }).tickSizeInner([-height]));
-
-                g.append("g")
-                    .attr("class", "y axis")
-                //.call(d3.axisLeft(y));
-
-                g.selectAll(".bar")
-                    .data(nested_year.values)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", 0)
-
-
-                    .attr("fill", function (d) {
-                        return color(d.key)
-                    })
-                    .attr("height", y.bandwidth())
-                    .attr("y", function (d, i) {
-                        console.log(i);
-                        return y(i);
-                    })
-                    .attr("width", function (d) {
-                        return x(d.value[y_key]);
-                    })
-                    .on("mousemove", function (d) {
-                        tooltip
-                            .style("left", d3.event.pageX - 50 + "px")
-                            .style("top", d3.event.pageY - 70 + "px")
-                            .style("display", "inline-block")
-                            .html(d.key + "<br>" + "" + tformat(d.value[y_key]) + "$");
-                    })
-                    .on("mouseout", function (d) {
-                        tooltip.style("display", "none");
-                    })
-
-
-
-            })
-
+            return is_sf;
         });
-
-
-    }
-
-    $(".button").click(function (e) {
-        x_key = "country"
-        y_key = $(this).attr("data-value");
+        y_key = "total_budget"
+        x_key = "director_name"
+        //affichage par défaut
         barchart(y_key, x_key);
-
-
+    }
+    $(".button2").click(function (e) {
+        x_key = $(this).attr("data-value");
+        update_com(x_key, y_key);
+        barchart(y_key, x_key);
     });
-
-        $(".button2").click(function (e) {
-            x_key = $(this).attr("data-value");
-            barchart(y_key, x_key);
+    $(".button").click(function (e) {
+        y_key = $(this).attr("data-value");
+        update_com(x_key, y_key);
+        barchart(y_key, x_key);
     });
-
-
+    d3.csv("movie_IMDB.csv", data_loaded);
+    function update_com(x_key, y_key){
+        filename = "com-" + x_key + "-" + y_key + ".html";
+        $.get("com/" + filename , function(data){
+            $("#com").html(data);
+        })
+    }
 </script>
+<script src=button.js></script>
+<script src=button2.js></script>
 </html>
