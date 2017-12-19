@@ -47,15 +47,15 @@
         </div>
         <div class="row">
             <div class="col-xs-4">
-                <h2>Année 2000</h2>
+                <h2>2000-2016</h2>
                 <svg width="300" height="300" id="barchart2000"></svg>
             </div>
             <div class="col-xs-4">
-                <h2>Année 1980</h2>
+                <h2>1980-2000</h2>
                 <svg width="300" height="300" id="barchart1980"></svg>
             </div>
             <div class="col-xs-4">
-                <h2>Année 1960</h2>
+                <h2>1960-1980</h2>
                 <svg width="300" height="300" id="barchart1960"></svg>
             </div>
             <div class="col-xs-12">
@@ -68,7 +68,7 @@
     </div>
 </div>
 
-</body>
+</body><x></x>
 <script>
     var data;
 
@@ -257,17 +257,25 @@
 
     $(".button2").click(function (e) {
         x_key = $(this).attr("data-value");
+        update_com(x_key, y_key);
         barchart(y_key, x_key);
     });
 
     $(".button").click(function (e) {
 
         y_key = $(this).attr("data-value");
+        update_com(x_key, y_key);
         barchart(y_key, x_key);
 
 
     });
     d3.csv("movie_IMDB.csv", data_loaded);
 
+    function update_com(x_key, y_key){
+        filename = "com-" + x_key + "-" + y_key + ".html";
+        $.get("com/" + filename , function(data){
+            $("#com").html(data);
+        })
+    }
 </script>
 </html>
