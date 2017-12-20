@@ -5,7 +5,7 @@
 	position: relative;
 }
 .button {
-	width: 190px;
+	width: 175px;
 	margin-top: 15px;
 	margin-right: 0px;
 	margin-bottom: auto;
@@ -127,8 +127,8 @@ h1 {
 }
 
 svg {
-	font: "Montserrat Bold";
-	font-family: "Montserrat Bold", sans-serif;
-	font-size: 18px;
+	font: "Catamaran";
+	font-family: "Catamaran", sans-serif;
+	font-size: 12px;
 color: #1f1f1f;
 }
