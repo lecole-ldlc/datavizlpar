@@ -63,7 +63,7 @@
                 <a style="font-size:14px ; padding-left:74.4px ; padding-right:74.4px" class="button2" data-value="country">Pays</a> <br><br><br>
                 <a style="font-size:14px ;padding-left:39.8px ; padding-right:39.8px" class="button2" data-value="director_name">Réalisateur</a><br><br><br>
                 <a  style="font-size:14px ;padding-left:35.4px ; padding-right:35.4px" class="button2" data-value="movie_title">Titre du film</a> <br><br><br>
-                <a  style="font-size:14px ;padding-left:12.4px ; padding-right:12.4px" class="button2" data-value="actor_1_name">Acteur Principale</a>
+                <a  style="font-size:14px ;padding-left:12.4px ; padding-right:12.4px" class="button2" data-value="actor_1_name">Acteur Principal</a>
             </div>
             <div class="col-xs-3" style="background-color:#D7D7D7">
                 <svg width="250" height="300" id="barchart1960"></svg>
@@ -195,7 +195,7 @@ Vous avez le choix d’afficher les données à propos des réalisateurs, pays, 
                         .style("left", d3.event.pageX - 50 + "px")
                         .style("top", d3.event.pageY - 70 + "px")
                         .style("display", "inline-block")
-                        .html("" + tformat(d.value[y_key]) + "$");
+                        .html("" + tformat(d.value[y_key]) + "");
                 })
                 .on("mouseout", function (d) {
                     tooltip.style("display", "none");
